@@ -43,27 +43,36 @@ class Firewall:
 
 
     def _parse_rules(self):
-        with open(self.path, 'r') as f:
-            for line in f:
-                rule = line.strip().split(',')
-                direction, protocol, port_range, ip_addr_range = tuple(rule)
+        try:
+            with open(self.path, 'r') as f:
+                for line in f:
+                    line = line.strip()
 
-                min_port, max_port = Firewall._split_port_range(port_range)
-                low_ip, high_ip = Firewall._split_ip_addr_range(ip_addr_range)
+                    if line == '':
+                        continue
 
-                if direction == 'inbound':
-                    for port in range(min_port, max_port + 1):
-                        if port in self.inbound_protocols[protocol]:
-                            self.inbound_protocols[protocol][port].append(IPAddressRange(low_ip, high_ip))
-                        else:
-                            self.inbound_protocols[protocol][port] = [IPAddressRange(low_ip, high_ip)]
-                        
-                else:
-                    for port in range(min_port, max_port + 1):
-                        if port in self.outbound_protocals[protocol]:
-                            self.outbound_protocals[protocol][port].append(IPAddressRange(low_ip, high_ip))
-                        else:
-                            self.outbound_protocals[protocol][port] = [IPAddressRange(low_ip, high_ip)]
+                    rule = line.split(',')
+                    direction, protocol, port_range, ip_addr_range = tuple(rule)
+
+                    min_port, max_port = Firewall._split_port_range(port_range)
+                    low_ip, high_ip = Firewall._split_ip_addr_range(ip_addr_range)
+
+                    if direction == 'inbound':
+                        for port in range(min_port, max_port + 1):
+                            if port in self.inbound_protocols[protocol]:
+                                self.inbound_protocols[protocol][port].append(IPAddressRange(low_ip, high_ip))
+                            else:
+                                self.inbound_protocols[protocol][port] = [IPAddressRange(low_ip, high_ip)]
+                            
+                    else:
+                        for port in range(min_port, max_port + 1):
+                            if port in self.outbound_protocals[protocol]:
+                                self.outbound_protocals[protocol][port].append(IPAddressRange(low_ip, high_ip))
+                            else:
+                                self.outbound_protocals[protocol][port] = [IPAddressRange(low_ip, high_ip)]
+        except FileNotFoundError as e:
+            print(e)
+            quit()
 
 
     def accept_packet(self, direction: str, protocol: str, port: int, ip_address: str) -> bool:
