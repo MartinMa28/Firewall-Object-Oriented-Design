@@ -30,6 +30,11 @@ class Firewall:
 
     @staticmethod
     def _split_ip_addr_range(ip_addr_range):
+        """
+        This helper method splits the IPv4 address range into
+        the lower bound and upper bound, and then returns the
+        corresponding IPAddressRange object.
+        """
         ip_addr_range = ip_addr_range.split('-')
 
         if len(ip_addr_range) > 1:
@@ -39,7 +44,7 @@ class Firewall:
             low_ip = ip_addr_range[0]
             high_ip = ip_addr_range[0]
 
-        return low_ip, high_ip
+        return IPAddressRange(low_ip, high_ip)
 
 
     def _parse_rules(self):
@@ -52,24 +57,24 @@ class Firewall:
                         continue
 
                     rule = line.split(',')
-                    direction, protocol, port_range, ip_addr_range = tuple(rule)
+                    direction, protocol, port_range, ip_addr = tuple(rule)
 
                     min_port, max_port = Firewall._split_port_range(port_range)
-                    low_ip, high_ip = Firewall._split_ip_addr_range(ip_addr_range)
+                    ip_range = Firewall._split_ip_addr_range(ip_addr)
 
                     if direction == 'inbound':
                         for port in range(min_port, max_port + 1):
                             if port in self.inbound_protocols[protocol]:
-                                self.inbound_protocols[protocol][port].append(IPAddressRange(low_ip, high_ip))
+                                self.inbound_protocols[protocol][port].append(ip_range)
                             else:
-                                self.inbound_protocols[protocol][port] = [IPAddressRange(low_ip, high_ip)]
+                                self.inbound_protocols[protocol][port] = [ip_range]
                             
                     else:
                         for port in range(min_port, max_port + 1):
                             if port in self.outbound_protocals[protocol]:
-                                self.outbound_protocals[protocol][port].append(IPAddressRange(low_ip, high_ip))
+                                self.outbound_protocals[protocol][port].append(ip_range)
                             else:
-                                self.outbound_protocals[protocol][port] = [IPAddressRange(low_ip, high_ip)]
+                                self.outbound_protocals[protocol][port] = [ip_range]
         except FileNotFoundError as e:
             print(e)
             quit()
