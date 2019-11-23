@@ -57,8 +57,8 @@ Another point of the design is that, inevitably, the IP addresses of the packets
 
 ## Things could be improved
 If I have more time to finish this design of the firewall, I might store the IP address ranges in a sorted order in the list.
-In this way, it's possible to use binary search to verify if a certain IP address is allowed. Using binary search could improve the time comlexity to O(log n), vs O(n) in current implementation. However, we still need to decide sorting the IP ranges by the lower bound, upper bound or the median value.
+In this way, it's possible to use binary search to verify if a certain IP address is allowed. Using binary search could improve the time comlexity to O(log n), from O(n) in current implementation. However, we still need to decide sorting the IP ranges by the lower bound, upper bound or the median value.
 
 ## Team perferance
 Data team - the most interested in
-Platform team - quite interested in
+Platform team - also very interested in
