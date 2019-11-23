@@ -54,3 +54,11 @@ class IPAddressRange:
         return ip_addr >= self.lower and ip_addr <= self.upper
 ```
 Another point of the design is that, inevitably, the IP addresses of the packets are going to be compared very frequently. So, I create the IPAddressRange class, which has a lower bound IP address and a higher bound IP address. The lower bound and the higher bound are saved in the integer format. Thus, validating a given IP address is nothing different from comparing if a given integer stays in the range of \[lower_bound, upper_bound\].
+
+## Things could be improved
+If I have more time to finish this design of the firewall, I might store the IP address ranges in a sorted order in the list.
+In this way, it's possible to use binary search to verify if a certain IP address is allowed. Using binary search could improve the time comlexity to O(log n), vs O(n) in current implementation. However, we still need to decide sorting the IP ranges by the lower bound, upper bound or the median value.
+
+## Team perferance
+Data team - the most interested in
+Platform team - quite interested in
